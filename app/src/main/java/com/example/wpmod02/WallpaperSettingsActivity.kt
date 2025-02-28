@@ -37,59 +37,127 @@ fun WallpaperSettingsScreen() {
     var densityFactor by remember { mutableStateOf(prefs.getFloat("densityFactor", 0.8f)) }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Mode", style = MaterialTheme.typography.titleLarge)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            RadioButton(selected = mode == "default", onClick = {
-                mode = "default"
-                prefs.edit().putString("mode", "default").apply()
-            })
-            Text("Default")
-            Spacer(modifier = Modifier.width(16.dp))
-            RadioButton(selected = mode == "custom", onClick = {
-                mode = "custom"
-                prefs.edit().putString("mode", "custom").apply()
-            })
-            Text("Custom")
-            Spacer(modifier = Modifier.width(16.dp))
-            RadioButton(selected = mode == "random", onClick = {
-                mode = "random"
-                prefs.edit().putString("mode", "random").apply()
-            })
-            Text("Random")
+        Text("Wallpaper Mode", style = MaterialTheme.typography.titleLarge)
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        // Default mode checkbox
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Checkbox(
+                checked = mode == "default",
+                onCheckedChange = { checked ->
+                    if (checked) {
+                        mode = "default"
+                        prefs.edit().putString("mode", "default").apply()
+                    }
+                }
+            )
+            Text("Default Settings", style = MaterialTheme.typography.bodyLarge)
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        SliderWithLabel(
-            label = "Wave Amplitude",
-            value = waveAmplitude,
-            onValueChange = { waveAmplitude = it; prefs.edit().putFloat("waveAmplitude", it).apply() },
-            valueRange = 0f..20f,
-            steps = 40,
-            enabled = mode == "custom"
-        )
-        SliderWithLabel(
-            label = "Rotation Amplitude",
-            value = rotationAmplitude,
-            onValueChange = { rotationAmplitude = it; prefs.edit().putFloat("rotationAmplitude", it).apply() },
-            valueRange = 0f..2f,
-            steps = 20,
-            enabled = mode == "custom"
-        )
-        SliderWithLabel(
-            label = "Angle Frequency",
-            value = angleFrequency,
-            onValueChange = { angleFrequency = it; prefs.edit().putFloat("angleFrequency", it).apply() },
-            valueRange = 1f..10f,
-            steps = 18,
-            enabled = mode == "custom"
-        )
-        SliderWithLabel(
-            label = "Density Factor",
-            value = densityFactor,
-            onValueChange = { densityFactor = it; prefs.edit().putFloat("densityFactor", it).apply() },
-            valueRange = 0.1f..2f,
-            steps = 19,
-            enabled = mode == "custom"
-        )
+        
+        // Custom mode checkbox with sliders
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Checkbox(
+                checked = mode == "custom",
+                onCheckedChange = { checked ->
+                    if (checked) {
+                        mode = "custom"
+                        prefs.edit().putString("mode", "custom").apply()
+                    }
+                }
+            )
+            Text("Custom Settings", style = MaterialTheme.typography.bodyLarge)
+        }
+        
+        // Only show sliders if custom mode is selected
+        if (mode == "custom") {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    SliderWithLabel(
+                        label = "Wave Amplitude",
+                        value = waveAmplitude,
+                        onValueChange = { waveAmplitude = it; prefs.edit().putFloat("waveAmplitude", it).apply() },
+                        valueRange = 0f..20f,
+                        steps = 40,
+                        enabled = true
+                    )
+                    SliderWithLabel(
+                        label = "Rotation Amplitude",
+                        value = rotationAmplitude,
+                        onValueChange = { rotationAmplitude = it; prefs.edit().putFloat("rotationAmplitude", it).apply() },
+                        valueRange = 0f..2f,
+                        steps = 20,
+                        enabled = true
+                    )
+                    SliderWithLabel(
+                        label = "Angle Frequency",
+                        value = angleFrequency,
+                        onValueChange = { angleFrequency = it; prefs.edit().putFloat("angleFrequency", it).apply() },
+                        valueRange = 1f..10f,
+                        steps = 18,
+                        enabled = true
+                    )
+                    SliderWithLabel(
+                        label = "Density Factor",
+                        value = densityFactor,
+                        onValueChange = { densityFactor = it; prefs.edit().putFloat("densityFactor", it).apply() },
+                        valueRange = 0.1f..2f,
+                        steps = 19,
+                        enabled = true
+                    )
+                }
+            }
+        }
+        
+        // Random mode checkbox
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Checkbox(
+                checked = mode == "random",
+                onCheckedChange = { checked ->
+                    if (checked) {
+                        mode = "random"
+                        prefs.edit().putString("mode", "random").apply()
+                    }
+                }
+            )
+            Column {
+                Text("Random Settings", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    "Parameters change randomly every 10 seconds",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // Information card
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    "How to use:",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("1. Select one of the three modes above")
+                Text("2. If using Custom mode, adjust the sliders to your preference")
+                Text("3. Return to home screen and set as wallpaper")
+                Text("4. Changes apply immediately to active wallpaper")
+            }
+        }
     }
 }
 
@@ -103,7 +171,14 @@ fun SliderWithLabel(
     enabled: Boolean
 ) {
     Column {
-        Text(label)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(label)
+            Text("${String.format("%.1f", value)}")
+        }
         Slider(
             value = value,
             onValueChange = onValueChange,

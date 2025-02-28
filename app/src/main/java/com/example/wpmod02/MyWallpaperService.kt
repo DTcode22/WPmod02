@@ -173,7 +173,7 @@ class MyWallpaperService : WallpaperService() {
                     angleFrequency = (2..20).random() * 0.5f, // 1 to 10
                     densityFactor = (1..20).random() * 0.1f // 0.1 to 2
                 )
-                handler.postDelayed({ updateRandomParams() }, 5000) // Update every 5 seconds
+                handler.postDelayed({ updateRandomParams() }, 10000) // Update every 10 seconds
             }
         }
     }
