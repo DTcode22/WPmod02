@@ -1,6 +1,2 @@
 Demo for Android WallpaperLive
-<video width="600" controls>
-  <source src="https://raw.githubusercontent.com/dtcode22/wpmod02/master/video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-
+https://github.com/user-attachments/assets/7e834867-695a-4344-a59d-7a1792f0cdd4
